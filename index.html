@@ -17,6 +17,29 @@
       background: #f0f2f5;
       color: #1c1e21;
     }
+    .lang-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .lang-btn {
+      flex: 1;
+      margin-top: 0;
+      padding: 8px 6px;
+      font-size: 12px;
+      border-radius: 8px;
+      background: #e5e7eb;
+      color: #1f2937;
+      font-weight: 600;
+    }
+    .lang-btn.active {
+      background: #0088cc;
+      color: #ffffff;
+    }
     .card {
       background: #ffffff;
       padding: 16px;
@@ -81,6 +104,24 @@
       margin-top: 10px;
       font-size: 13px;
       color: #1e3a8a;
+    }
+    .support-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #334155;
+    }
+    .admin-acc-box {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #14532d;
     }
     .msg-box {
       padding: 10px;
@@ -207,6 +248,14 @@
       gap: 8px;
       margin-top: 10px;
     }
+    .user-pwd-row {
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -275,33 +324,45 @@
 </head>
 <body>
 
+  <!-- LANGUAGE SELECTOR -->
+  <div class="lang-bar">
+    <button type="button" class="lang-btn active" id="lang-om" onclick="setLanguage('om')">Afaan Oromoo</button>
+    <button type="button" class="lang-btn" id="lang-am" onclick="setLanguage('am')">አማርኛ</button>
+    <button type="button" class="lang-btn" id="lang-en" onclick="setLanguage('en')">English</button>
+  </div>
+
   <!-- AUTH SECTION -->
   <div id="authSection" class="card">
-    <h2><i class="fa-solid fa-shield-halved" style="color:#0088cc;"></i> Seeni / Galmaa'i</h2>
-    <div class="warning">
+    <h2 id="authTitle"><i class="fa-solid fa-shield-halved" style="color:#0088cc;"></i> Seeni / Galmaa'i</h2>
+    <div class="warning" id="authWarning">
       <i class="fa-solid fa-triangle-exclamation"></i>
-      <b>Of-eeggannoo:</b> Password Telegram keetii hin galchin. Password haaraa kan appii kanaaf qofa ta'u fayyadami.
+      <b>Nageenyaaf:</b> Password Telegram keetii hin galchin. Password haaraa kan appii kanaaf qofa ta'u fayyadami. Password yoo jalaa bade / irraanfatame <b>Support</b> gaafadhu.
     </div>
     <input type="email" id="emailInput" placeholder="Email kee galchi" />
     <input type="password" id="passwordInput" placeholder="Password (xiqqoo 6+)" />
-    <button type="button" id="loginBtn"><i class="fa-solid fa-right-to-bracket"></i> Seeni / Galmaa'i</button>
+    <button type="button" id="loginBtn"><i class="fa-solid fa-right-to-bracket"></i> <span id="loginBtnText">Seeni / Galmaa'i</span></button>
     <div id="authMsg" class="msg-box"></div>
+
+    <div class="support-box" id="authSupportBox">
+      <b><i class="fa-solid fa-headset" style="color:#0088cc;"></i> Support & Password Recovery:</b><br/>
+      Password yoo jalaa bade ykn gargaarsa barbaaddan Telegram Support <a href="https://t.me/QggameBot" target="_blank" style="color:#0088cc; font-weight:600;">@QggameBot</a> irratti Admin gaafadhaa.
+    </div>
   </div>
 
   <!-- MAIN APP SECTION -->
   <div id="appSection" class="hidden">
     <div class="wallet-box">
       <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
-        <span><i class="fa-solid fa-wallet"></i> Wallet Balance</span>
+        <span><i class="fa-solid fa-wallet"></i> <span id="walletLabel">Wallet Balance</span></span>
         <span id="userEmailDisplay"></span>
       </div>
       <div class="wallet-balance"><span id="balanceAmount">0.00</span> ETB</div>
       <div class="wallet-actions">
         <button type="button" onclick="switchTab('depositTab', document.querySelectorAll('.nav-item')[1])">
-          <i class="fa-solid fa-circle-arrow-down"></i> Deposit
+          <i class="fa-solid fa-circle-arrow-down"></i> <span id="quickDepositText">Deposit</span>
         </button>
         <button type="button" onclick="switchTab('withdrawTab', document.querySelectorAll('.nav-item')[2])">
-          <i class="fa-solid fa-circle-arrow-up"></i> Withdraw
+          <i class="fa-solid fa-circle-arrow-up"></i> <span id="quickWithdrawText">Withdraw</span>
         </button>
       </div>
     </div>
@@ -310,152 +371,171 @@
 
     <!-- TASKS -->
     <div id="tasksTab" class="tab-content card">
-      <h3><i class="fa-solid fa-briefcase" style="color:#0088cc;"></i> Hojiiwwan Online (Tasks)</h3>
+      <h3><i class="fa-solid fa-briefcase" style="color:#0088cc;"></i> <span id="tasksHeading">Hojiiwwan Online (Tasks)</span></h3>
 
       <div class="task">
         <div class="task-header">
-          <b><i class="fa-brands fa-telegram" style="color:#0088cc;"></i> Channel Join Gochuu</b>
+          <b><i class="fa-brands fa-telegram" style="color:#0088cc;"></i> <span id="task1Title">Channel Join Gochuu</span></b>
           <span class="badge">+15 ETB</span>
         </div>
-        <p style="font-size:13px; color:#555; margin:4px 0;">Channel keenya seenuun miseensa ta'i.</p>
+        <p style="font-size:13px; color:#555; margin:4px 0;" id="task1Desc">Channel keenya seenuun miseensa ta'i.</p>
         <button type="button" class="btn-green" id="btn-task1" onclick="completeTask('task1', 15, this)">
-          <i class="fa-solid fa-check"></i> Xumureera
+          <i class="fa-solid fa-check"></i> <span class="task-btn-label">Xumureera</span>
         </button>
       </div>
 
       <div class="task">
         <div class="task-header">
-          <b><i class="fa-solid fa-file-pen" style="color:#ea580c;"></i> Qorannoo Guutuu (Survey)</b>
+          <b><i class="fa-solid fa-file-pen" style="color:#ea580c;"></i> <span id="task2Title">Qorannoo Guutuu (Survey)</span></b>
           <span class="badge">+25 ETB</span>
         </div>
-        <p style="font-size:13px; color:#555; margin:4px 0;">Gaaffilee gabaabaa 3 deebisi.</p>
+        <p style="font-size:13px; color:#555; margin:4px 0;" id="task2Desc">Gaaffilee gabaabaa 3 deebisi.</p>
         <button type="button" class="btn-green" id="btn-task2" onclick="openSurveyModal()">
-          <i class="fa-solid fa-list-check"></i> Qorannoo Jalqabi
+          <i class="fa-solid fa-list-check"></i> <span id="startSurveyText">Qorannoo Jalqabi</span>
         </button>
       </div>
 
-      <!-- CUSTOM TASKS ADDED BY ADMIN -->
       <div id="customTasksList"></div>
 
-      <!-- REFERRAL SECTION -->
       <div class="task">
         <div class="task-header">
-          <b><i class="fa-solid fa-user-plus" style="color:#7c3aed;"></i> Hiriyootaaf Qooduu (Referral)</b>
+          <b><i class="fa-solid fa-user-plus" style="color:#7c3aed;"></i> <span id="refTitle">Hiriyootaaf Qooduu (Referral)</span></b>
           <span class="badge">+30 ETB</span>
         </div>
-        <p style="font-size:13px; color:#555; margin:4px 0;">
+        <p style="font-size:13px; color:#555; margin:4px 0;" id="refDesc">
           Linkii referral kee qoodi. Hiriyoonni (<span id="refCountDisplay">0</span>) yoo ittiin seenan badhaasa argatta.
         </p>
         <div class="ref-box">
           <input type="text" id="referralLinkInput" readonly />
-          <button type="button" onclick="copyReferralLink()"><i class="fa-solid fa-copy"></i> Waraabi</button>
+          <button type="button" onclick="copyReferralLink()"><i class="fa-solid fa-copy"></i> <span id="copyBtnText">Waraabi</span></button>
         </div>
         <button type="button" class="btn-green" onclick="simulateReferralBonus()" style="margin-top:8px;">
-          <i class="fa-solid fa-gift"></i> Referral Bonus (+30 ETB) Yaali
+          <i class="fa-solid fa-gift"></i> <span id="refBonusBtnText">Referral Bonus (+30 ETB) Yaali</span>
         </button>
       </div>
     </div>
 
     <!-- DEPOSIT -->
     <div id="depositTab" class="tab-content card hidden">
-      <h3><i class="fa-solid fa-circle-arrow-down" style="color:#16a34a;"></i> Maallaqa Galchuu (Deposit)</h3>
-      <div class="info-box">
-        <i class="fa-solid fa-circle-info"></i>
-        Erga kaffaltii ergitee booda <b>Transaction ID</b> galchi. Admin yeroo mirkaneessu (<b>Approved</b>) balance keetti dabala.
+      <h3><i class="fa-solid fa-circle-arrow-down" style="color:#16a34a;"></i> <span id="depositHeading">Maallaqa Galchuu (Deposit)</span></h3>
+
+      <div class="admin-acc-box">
+        <b><i class="fa-solid fa-building-columns"></i> <span id="adminAccTitle">Herrega Admin (Maallaqa Itti Ergattu):</span></b>
+        <div id="adminDepositAccountsDisplay" style="margin-top:6px; line-height:1.6;"></div>
       </div>
-      <label style="font-size:13px; display:block; margin-top:8px;">Karaa Kaffaltii Filadhu:</label>
-      <select id="depositMethod">
-        <option value="Telebirr">Telebirr (0911XXXXXX)</option>
-        <option value="CBE">CBE (1000XXXXXXXXX)</option>
-        <option value="CBE Birr">CBE Birr</option>
+
+      <div class="info-box" id="depositInfoText">
+        <i class="fa-solid fa-circle-info"></i>
+        Jalqaba herrega Admin (<b>Telebirr</b> ykn <b>M-Pesa</b>) irratti ergi. Booda <b>Transaction ID</b> galchii ergi — Admin mirkaneessinaan (<b>Approved</b>) balance keetti ni dabala.
+      </div>
+
+      <label style="font-size:13px; display:block; margin-top:8px;" id="depositMethodLabel">Karaa Kaffaltii Filadhu:</label>
+      <select id="depositMethod" onchange="renderAdminDepositAccounts()">
+        <option value="Telebirr">Telebirr (0941595844)</option>
+        <option value="M-Pesa">M-Pesa (0715081504)</option>
       </select>
       <input type="number" id="depositAmount" placeholder="Hamma maallaqaa (ETB) galchi (fkn: 100)" />
       <input type="text" id="depositRef" placeholder="Transaction ID / Reference galchi" />
       <button type="button" class="btn-green" onclick="submitDeposit()">
-        <i class="fa-solid fa-paper-plane"></i> Deposit Ergi
+        <i class="fa-solid fa-paper-plane"></i> <span id="submitDepositText">Deposit Adminitti Ergi</span>
       </button>
     </div>
 
     <!-- WITHDRAW -->
     <div id="withdrawTab" class="tab-content card hidden">
-      <h3><i class="fa-solid fa-circle-arrow-up" style="color:#ea580c;"></i> Maallaqa Baafachuu (Withdraw)</h3>
-      <div class="info-box">
+      <h3><i class="fa-solid fa-circle-arrow-up" style="color:#ea580c;"></i> <span id="withdrawHeading">Maallaqa Baafachuu (Withdraw)</span></h3>
+      <div class="info-box" id="withdrawInfoText">
         <i class="fa-solid fa-clock"></i>
         Gaaffiin withdraw mirkaneessa Admin (<b>Pending Approval</b>) eega.
       </div>
-      <label style="font-size:13px; display:block; margin-top:8px;">Karaa Maallaqa Itti Fudhattu:</label>
+      <label style="font-size:13px; display:block; margin-top:8px;" id="withdrawMethodLabel">Karaa Maallaqa Itti Fudhattu:</label>
       <select id="withdrawMethod">
         <option value="Telebirr">Telebirr</option>
-        <option value="CBE">Commercial Bank of Ethiopia (CBE)</option>
-        <option value="Awash Bank">Awash Bank</option>
+        <option value="M-Pesa">M-Pesa</option>
       </select>
-      <input type="text" id="withdrawAccount" placeholder="Lakkoofsa bilbilaa ykn Herrega Baankii" />
+      <input type="text" id="withdrawAccount" placeholder="Lakkoofsa bilbilaa galchi" />
       <input type="number" id="withdrawAmount" placeholder="Hamma baafachuu barbaaddu (Xiqqoo 50 ETB)" />
       <button type="button" class="btn-orange" onclick="submitWithdraw()">
-        <i class="fa-solid fa-money-bill-transfer"></i> Withdraw Gaafadhu
+        <i class="fa-solid fa-money-bill-transfer"></i> <span id="submitWithdrawText">Withdraw Gaafadhu</span>
       </button>
     </div>
 
     <!-- PROFILE & HISTORY -->
     <div id="profileTab" class="tab-content card hidden">
-      <h3><i class="fa-solid fa-clock-rotate-left" style="color:#0088cc;"></i> Seenaa (History)</h3>
-      <div id="historyList">
-        <p style="font-size:13px; color:#777;">Ammaaf seenaan hin jiru.</p>
+      <h3><i class="fa-solid fa-clock-rotate-left" style="color:#0088cc;"></i> <span id="historyHeading">Seenaa (History)</span></h3>
+      <div id="historyList"></div>
+
+      <div class="support-box" id="profileSupportBox">
+        <b><i class="fa-solid fa-headset" style="color:#0088cc;"></i> Support & Password Gargaarsa:</b><br/>
+        Password yoo jalaa bade ykn rakkoo biraa yoo qabaattan <a href="https://t.me/QggameBot" target="_blank" style="color:#0088cc; font-weight:600;">@QggameBot</a> irratti Admin gaafadhaa.
       </div>
+
       <hr style="border:none; border-top:1px solid #eee; margin:16px 0;" />
       <button type="button" class="btn-red" onclick="logout()">
-        <i class="fa-solid fa-right-from-bracket"></i> Bahuu (Logout)
+        <i class="fa-solid fa-right-from-bracket"></i> <span id="logoutBtnText">Bahuu (Logout)</span>
       </button>
     </div>
 
     <!-- ADMIN PANEL -->
     <div id="adminTab" class="tab-content card hidden">
-      <h3><i class="fa-solid fa-user-shield" style="color:#7c3aed;"></i> Admin Panel</h3>
+      <h3><i class="fa-solid fa-user-shield" style="color:#7c3aed;"></i> <span id="adminHeading">Admin Panel</span></h3>
 
       <div class="admin-stats">
         <div class="stat-box">
-          <div style="font-size:12px; color:#64748b;">Pending Requests</div>
+          <div style="font-size:12px; color:#64748b;" id="adminPendingLabel">Pending Requests</div>
           <div class="stat-num" id="adminPendingCount">0</div>
         </div>
         <div class="stat-box">
-          <div style="font-size:12px; color:#64748b;">Wallet Balance</div>
+          <div style="font-size:12px; color:#64748b;" id="adminBalLabel">Wallet Balance</div>
           <div class="stat-num" id="adminBalanceView">0 ETB</div>
         </div>
       </div>
 
-      <h4><i class="fa-solid fa-hourglass-half" style="color:#d97706;"></i> Gaaffilee Mirkaneessa Eegan</h4>
-      <div id="adminPendingList">
-        <p style="font-size:13px; color:#777;">Gaaffiin mirkaneessa eegu hin jiru.</p>
-      </div>
+      <h4><i class="fa-solid fa-hourglass-half" style="color:#d97706;"></i> <span id="adminReqHeading">Gaaffilee Mirkaneessa Eegan</span></h4>
+      <div id="adminPendingList"></div>
 
       <hr style="border:none; border-top:1px solid #eee; margin:18px 0;" />
 
-      <h4><i class="fa-solid fa-plus-circle" style="color:#16a34a;"></i> Hojii (Task) Haaraa Dabali</h4>
-      <input type="text" id="newTaskTitle" placeholder="Mata-duree hojii (fkn: YouTube Subscribe)" />
-      <input type="text" id="newTaskDesc" placeholder="Ibsa gabaabaa (fkn: Channel keenya subscribe godhi)" />
-      <input type="number" id="newTaskReward" placeholder="Badhaasa ETB (fkn: 20)" />
+      <h4><i class="fa-solid fa-key" style="color:#dc2626;"></i> <span id="adminPwdHeading">Password Fayyadamtoota Hundaa</span></h4>
+      <div id="adminUsersPasswordList"></div>
+
+      <hr style="border:none; border-top:1px solid #eee; margin:18px 0;" />
+
+      <h4><i class="fa-solid fa-building-columns" style="color:#0088cc;"></i> <span id="adminAccEditHeading">Herrega Deposit Admin Fooyyessi</span></h4>
+      <input type="text" id="adminTelebirrInput" placeholder="Telebirr (fkn: 0941595844)" />
+      <input type="text" id="adminMpesaInput" placeholder="M-Pesa (fkn: 0715081504)" />
+      <button type="button" onclick="saveAdminAccounts()">
+        <i class="fa-solid fa-floppy-disk"></i> <span id="saveAdminAccText">Herrega Admin Ol-kaa'i</span>
+      </button>
+
+      <hr style="border:none; border-top:1px solid #eee; margin:18px 0;" />
+
+      <h4><i class="fa-solid fa-plus-circle" style="color:#16a34a;"></i> <span id="addTaskHeading">Hojii (Task) Haaraa Dabali</span></h4>
+      <input type="text" id="newTaskTitle" placeholder="Mata-duree hojii" />
+      <input type="text" id="newTaskDesc" placeholder="Ibsa gabaabaa" />
+      <input type="number" id="newTaskReward" placeholder="Badhaasa ETB" />
       <button type="button" class="btn-green" onclick="addNewTaskByAdmin()">
-        <i class="fa-solid fa-plus"></i> Hojii Dabali
+        <i class="fa-solid fa-plus"></i> <span id="addTaskBtnText">Hojii Dabali</span>
       </button>
     </div>
 
     <!-- BOTTOM NAV -->
     <div class="bottom-nav">
       <div class="nav-item active" onclick="switchTab('tasksTab', this)">
-        <i class="fa-solid fa-list-check"></i> Hojii
+        <i class="fa-solid fa-list-check"></i> <span id="navTasks">Hojii</span>
       </div>
       <div class="nav-item" onclick="switchTab('depositTab', this)">
-        <i class="fa-solid fa-circle-plus"></i> Deposit
+        <i class="fa-solid fa-circle-plus"></i> <span id="navDeposit">Deposit</span>
       </div>
       <div class="nav-item" onclick="switchTab('withdrawTab', this)">
-        <i class="fa-solid fa-wallet"></i> Withdraw
+        <i class="fa-solid fa-wallet"></i> <span id="navWithdraw">Withdraw</span>
       </div>
       <div class="nav-item" onclick="switchTab('profileTab', this)">
-        <i class="fa-solid fa-user"></i> Profile
+        <i class="fa-solid fa-user"></i> <span id="navProfile">Profile</span>
       </div>
       <div class="nav-item hidden" id="adminNavItem" onclick="switchTab('adminTab', this)">
         <span id="adminNavBadge" class="nav-dot hidden">0</span>
-        <i class="fa-solid fa-user-shield"></i> Admin
+        <i class="fa-solid fa-user-shield"></i> <span id="navAdmin">Admin</span>
       </div>
     </div>
   </div>
@@ -463,52 +543,256 @@
   <!-- SURVEY MODAL -->
   <div id="surveyModal" class="modal-backdrop hidden">
     <div class="modal-card">
-      <h3><i class="fa-solid fa-file-pen" style="color:#ea580c;"></i> Qorannoo Gabaabaa</h3>
+      <h3><i class="fa-solid fa-file-pen" style="color:#ea580c;"></i> <span id="surveyModalTitle">Qorannoo Gabaabaa</span></h3>
       <div class="survey-q">
-        <label><b>1.</b> Appii kana yeroo meeqaaf fayyadamta?</label>
+        <label><b id="q1Label">1. Appii kana yeroo meeqaaf fayyadamta?</b></label>
         <select id="q1">
-          <option value="">-- Filadhu --</option>
-          <option value="Guyyaa hunda">Guyyaa hunda</option>
-          <option value="Torbanitti al muraasa">Torbanitti al muraasa</option>
+          <option value="" id="q1Opt0">-- Filadhu --</option>
+          <option value="Daily" id="q1Opt1">Guyyaa hunda</option>
+          <option value="Weekly" id="q1Opt2">Torbanitti al muraasa</option>
         </select>
       </div>
       <div class="survey-q">
-        <label><b>2.</b> Karaa kaffaltii kamtu siif salphata?</label>
+        <label><b id="q2Label">2. Karaa kaffaltii kamtu siif salphata?</b></label>
         <select id="q2">
-          <option value="">-- Filadhu --</option>
+          <option value="" id="q2Opt0">-- Filadhu --</option>
           <option value="Telebirr">Telebirr</option>
-          <option value="CBE">CBE / CBE Birr</option>
-          <option value="Awash Bank">Awash Bank</option>
+          <option value="M-Pesa">M-Pesa</option>
         </select>
       </div>
       <div class="survey-q">
-        <label><b>3.</b> Yaada fooyya'iinsaa gabaabaa:</label>
-        <input type="text" id="q3" placeholder="Fkn: Hojii haaraa dabalaa" />
+        <label><b id="q3Label">3. Yaada fooyya'iinsaa gabaabaa:</b></label>
+        <input type="text" id="q3" placeholder="..." />
       </div>
       <div id="surveyMsg" class="msg-box"></div>
       <button type="button" class="btn-green" onclick="submitSurvey()">
-        <i class="fa-solid fa-check-circle"></i> Xumuri (+25 ETB Fudhadhu)
+        <i class="fa-solid fa-check-circle"></i> <span id="submitSurveyText">Xumuri (+25 ETB)</span>
       </button>
       <button type="button" class="btn-gray" onclick="closeSurveyModal()">
-        Cufi
+        <span id="closeSurveyText">Cufi</span>
       </button>
     </div>
   </div>
 
   <script>
     const ADMIN_EMAIL = "mikmak413400@gmail.com";
+    const BOT_USERNAME = "QggameBot";
 
-    function isAdminUser(email) {
-      const currentEmail = email || getData("loggedInEmail", "");
-      return (currentEmail || "").trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
-    }
-
-    try {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
+    const I18N = {
+      om: {
+        authTitle: "Seeni / Galmaa'i",
+        authWarning: "<b>Nageenyaaf:</b> Password Telegram keetii hin galchin. Password haaraa kan appii kanaaf qofa ta'u fayyadami. Password yoo jalaa bade / irraanfatame <b>Support</b> gaafadhu.",
+        emailPh: "Email kee galchi",
+        passPh: "Password (xiqqoo 6+)",
+        loginBtn: "Seeni / Galmaa'i",
+        supportHtml: '<b><i class="fa-solid fa-headset" style="color:#0088cc;"></i> Support & Password Recovery:</b><br/>Password yoo jalaa bade ykn gargaarsa barbaaddan Telegram Support <a href="https://t.me/QggameBot" target="_blank" style="color:#0088cc; font-weight:600;">@QggameBot</a> irratti Admin gaafadhaa.',
+        walletLabel: "Wallet Balance",
+        quickDeposit: "Deposit",
+        quickWithdraw: "Withdraw",
+        tasksHeading: "Hojiiwwan Online (Tasks)",
+        task1Title: "Channel Join Gochuu",
+        task1Desc: "Channel keenya seenuun miseensa ta'i.",
+        markDone: "Xumureera",
+        doneLabel: "Xumurameera",
+        task2Title: "Qorannoo Guutuu (Survey)",
+        task2Desc: "Gaaffilee gabaabaa 3 deebisi.",
+        startSurvey: "Qorannoo Jalqabi",
+        refTitle: "Hiriyootaaf Qooduu",
+        refDescPrefix: "Linkii referral kee qoodi. Hiriyoonni (",
+        refDescSuffix: ") yoo ittiin seenan badhaasa argatta.",
+        copyBtn: "Waraabi",
+        refBonusBtn: "Referral Bonus (+30 ETB) Yaali",
+        depositHeading: "Maallaqa Galchuu (Deposit)",
+        adminAccTitle: "Herrega Admin (Maallaqa Itti Ergattu):",
+        depositInfo: 'Jalqaba herrega Admin (<b>Telebirr</b> ykn <b>M-Pesa</b>) irratti ergi. Booda <b>Transaction ID</b> galchii ergi — Admin mirkaneessinaan (<b>Approved</b>) balance keetti ni dabala.',
+        depositMethodLabel: "Karaa Kaffaltii Filadhu:",
+        depositAmountPh: "Hamma maallaqaa (ETB) galchi (fkn: 100)",
+        depositRefPh: "Transaction ID / Reference galchi",
+        submitDeposit: "Deposit Adminitti Ergi",
+        withdrawHeading: "Maallaqa Baafachuu (Withdraw)",
+        withdrawInfo: 'Gaaffiin withdraw mirkaneessa Admin (<b>Pending Approval</b>) eega.',
+        withdrawMethodLabel: "Karaa Maallaqa Itti Fudhattu:",
+        withdrawAccPh: "Lakkoofsa bilbilaa galchi",
+        withdrawAmtPh: "Hamma baafachuu barbaaddu (Xiqqoo 50 ETB)",
+        submitWithdraw: "Withdraw Gaafadhu",
+        historyHeading: "Seenaa (History)",
+        noHistory: "Ammaaf seenaan hin jiru.",
+        logoutBtn: "Bahuu (Logout)",
+        adminHeading: "Admin Panel",
+        adminPendingLabel: "Gaaffilee Eegaman",
+        adminBalLabel: "Wallet Balance",
+        adminReqHeading: "Gaaffilee Mirkaneessa Eegan",
+        noPending: "Gaaffiin mirkaneessa eegu hin jiru.",
+        approveBtn: "Mirkaneessi (Approve)",
+        rejectBtn: "Didi (Reject)",
+        adminPwdHeading: "Password Fayyadamtoota Hundaa",
+        noUsers: "Fayyadamtoonni galmaa'an hin jiran.",
+        adminAccEditHeading: "Herrega Deposit Admin Fooyyessi",
+        saveAdminAcc: "Herrega Admin Ol-kaa'i",
+        addTaskHeading: "Hojii (Task) Haaraa Dabali",
+        newTaskTitlePh: "Mata-duree hojii",
+        newTaskDescPh: "Ibsa gabaabaa",
+        newTaskRewardPh: "Badhaasa ETB",
+        addTaskBtn: "Hojii Dabali",
+        navTasks: "Hojii",
+        navDeposit: "Deposit",
+        navWithdraw: "Withdraw",
+        navProfile: "Profile",
+        navAdmin: "Admin",
+        surveyModalTitle: "Qorannoo Gabaabaa",
+        q1Label: "1. Appii kana yeroo meeqaaf fayyadamta?",
+        q1Opt0: "-- Filadhu --",
+        q1Opt1: "Guyyaa hunda",
+        q1Opt2: "Torbanitti al muraasa",
+        q2Label: "2. Karaa kaffaltii kamtu siif salphata?",
+        q2Opt0: "-- Filadhu --",
+        q3Label: "3. Yaada fooyya'iinsaa gabaabaa:",
+        submitSurvey: "Xumuri (+25 ETB)",
+        closeSurvey: "Cufi"
+      },
+      am: {
+        authTitle: "ይግቡ / ይመዝገቡ",
+        authWarning: "<b>ለደህንነት ሲባል፦</b> የቴሌግራም ይለፍ ቃልዎን አያስገቡ። ለዚህ ሚኒ አፕ ብቻ የሚሆን አዲስ ይለፍ ቃል ይጠቀሙ። ይለፍ ቃል ከጠፋብዎት <b>ድጋፍ (Support)</b> ያነጋግሩ።",
+        emailPh: "ኢሜይልዎን ያስገቡ",
+        passPh: "የይለፍ ቃል (ቢያንስ 6 ፊደል)",
+        loginBtn: "ይግቡ / ይመዝገቡ",
+        supportHtml: '<b><i class="fa-solid fa-headset" style="color:#0088cc;"></i> ድጋፍ እና የይለፍ ቃል መልሶ ማግኛ፦</b><br/>የይለፍ ቃል ቢጠፋብዎት ወይም እገዛ ከፈለጉ በቴሌግራም <a href="https://t.me/QggameBot" target="_blank" style="color:#0088cc; font-weight:600;">@QggameBot</a> አድሚንን ያናግሩ።',
+        walletLabel: "የኪስ ቦርሳ ቀሪ ሂሳብ",
+        quickDeposit: "ገንዘብ አስገባ",
+        quickWithdraw: "ገንዘብ አውጣ",
+        tasksHeading: "የኦንላይን ስራዎች (Tasks)",
+        task1Title: "ቻናል መቀላቀል",
+        task1Desc: "ቻናላችንን በመቀላቀል አባል ይሁኑ።",
+        markDone: "ጨርሻለሁ",
+        doneLabel: "ተጠናቋል",
+        task2Title: "አጭር ጥናት መሙላት (Survey)",
+        task2Desc: "3 አጭር ጥያቄዎችን ይመልሱ።",
+        startSurvey: "ጥናት ጀምር",
+        refTitle: "ለጓደኞች ማጋራት (Referral)",
+        refDescPrefix: "የሪፈራል ሊንክዎን ያጋሩ። ጓደኞች (",
+        refDescSuffix: ") ሲገቡ ሽልማት ያገኛሉ።",
+        copyBtn: "ቅዳ",
+        refBonusBtn: "Referral Bonus (+30 ETB) ይሞክሩ",
+        depositHeading: "ገንዘብ ማስገባት (Deposit)",
+        adminAccTitle: "የአድሚን አካውንት (ገንዘብ የሚላክበት)፦",
+        depositInfo: 'መጀመሪያ ወደ አድሚን አካውንት (<b>Telebirr</b> ወይም <b>M-Pesa</b>) ይላኩ። በኋላ <b>Transaction ID</b> አስገብተው ይላኩ — አድሚን ሲያጸድቅ (<b>Approved</b>) ወደ ሂሳብዎ ይገባል።',
+        depositMethodLabel: "የመክፈያ መንገድ ይምረጡ፦",
+        depositAmountPh: "የገንዘብ መጠን (ETB) ያስገቡ (ለምሳሌ፦ 100)",
+        depositRefPh: "Transaction ID / Reference ያስገቡ",
+        submitDeposit: "Deposit ወደ አድሚን ላክ",
+        withdrawHeading: "ገንዘብ ማውጣት (Withdraw)",
+        withdrawInfo: 'የማውጣት ጥያቄ የአድሚን ማረጋገጫ (<b>Pending Approval</b>) ይጠብቃል።',
+        withdrawMethodLabel: "ገንዘብ የሚቀበሉበት መንገድ፦",
+        withdrawAccPh: "ስልክ ቁጥር ያስገቡ",
+        withdrawAmtPh: "ማውጣት የሚፈልጉት መጠን (ቢያንስ 50 ETB)",
+        submitWithdraw: "Withdraw ይጠይቁ",
+        historyHeading: "ታሪክ (History)",
+        noHistory: "እስካሁን ምንም ታሪክ የለም።",
+        logoutBtn: "ውጣ (Logout)",
+        adminHeading: "አድሚን ፓነል",
+        adminPendingLabel: "በመጠባበቅ ላይ ያሉ",
+        adminBalLabel: "የኪስ ቦርሳ ቀሪ ሂሳብ",
+        adminReqHeading: "ማረጋገጫ የሚጠብቁ ጥያቄዎች",
+        noPending: "ማረጋገጫ የሚጠብቅ ጥያቄ የለም።",
+        approveBtn: "አጽድቅ (Approve)",
+        rejectBtn: "ውድቅ አድርግ (Reject)",
+        adminPwdHeading: "የተጠቃሚዎች የይለፍ ቃል (ለአድሚን ብቻ)",
+        noUsers: "የተመዘገቡ ተጠቃሚዎች የሉም።",
+        adminAccEditHeading: "የአድሚን Deposit አካውንት ያስተካክሉ",
+        saveAdminAcc: "የአድሚን አካውንት አስቀምጥ",
+        addTaskHeading: "አዲስ ስራ (Task) ጨምር",
+        newTaskTitlePh: "የስራው ርዕስ",
+        newTaskDescPh: "አጭር መግለጫ",
+        newTaskRewardPh: "ሽልማት በ ETB",
+        addTaskBtn: "ስራ ጨምር",
+        navTasks: "ስራዎች",
+        navDeposit: "Deposit",
+        navWithdraw: "Withdraw",
+        navProfile: "መገለጫ",
+        navAdmin: "አድሚን",
+        surveyModalTitle: "አጭር ጥናት",
+        q1Label: "1. ይህን አፕ ምን ያህል ጊዜ ይጠቀማሉ?",
+        q1Opt0: "-- ይምረጡ --",
+        q1Opt1: "በየቀኑ",
+        q1Opt2: "በሳምንት ጥቂት ጊዜ",
+        q2Label: "2. የትኛው የክፍያ መንገድ ይቀልዎታል?",
+        q2Opt0: "-- ይምረጡ --",
+        q3Label: "3. አጭር የማሻሻያ ሀሳብ፦",
+        submitSurvey: "ጨርስ (+25 ETB)",
+        closeSurvey: "ዝጋ"
+      },
+      en: {
+        authTitle: "Sign In / Register",
+        authWarning: "<b>Security Notice:</b> Do not enter your Telegram password. Use a separate password just for this mini app. Contact <b>Support</b> if you lose your password.",
+        emailPh: "Enter your email",
+        passPh: "Password (min 6 characters)",
+        loginBtn: "Sign In / Register",
+        supportHtml: '<b><i class="fa-solid fa-headset" style="color:#0088cc;"></i> Support & Password Recovery:</b><br/>If you forget your password or need help, message Admin on Telegram <a href="https://t.me/QggameBot" target="_blank" style="color:#0088cc; font-weight:600;">@QggameBot</a>.',
+        walletLabel: "Wallet Balance",
+        quickDeposit: "Deposit",
+        quickWithdraw: "Withdraw",
+        tasksHeading: "Online Tasks",
+        task1Title: "Join Telegram Channel",
+        task1Desc: "Join our official channel and become a member.",
+        markDone: "Mark Completed",
+        doneLabel: "Completed",
+        task2Title: "Complete Short Survey",
+        task2Desc: "Answer 3 quick questions.",
+        startSurvey: "Start Survey",
+        refTitle: "Invite Friends (Referral)",
+        refDescPrefix: "Share your referral link. Invited friends (",
+        refDescSuffix: ") earn you rewards.",
+        copyBtn: "Copy",
+        refBonusBtn: "Test Referral Bonus (+30 ETB)",
+        depositHeading: "Deposit Funds",
+        adminAccTitle: "Admin Deposit Accounts (Send Payment Here):",
+        depositInfo: 'Send payment to the Admin account (<b>Telebirr</b> or <b>M-Pesa</b>) first, then enter the amount and <b>Transaction ID</b>. Once Admin approves (<b>Approved</b>), funds are credited to your wallet.',
+        depositMethodLabel: "Select Payment Method:",
+        depositAmountPh: "Amount in ETB (e.g. 100)",
+        depositRefPh: "Enter Transaction ID / Reference",
+        submitDeposit: "Submit Deposit to Admin",
+        withdrawHeading: "Withdraw Funds",
+        withdrawInfo: 'Withdrawal requests remain <b>Pending Approval</b> until reviewed by Admin.',
+        withdrawMethodLabel: "Select Payout Method:",
+        withdrawAccPh: "Enter phone number",
+        withdrawAmtPh: "Amount to withdraw (Min 50 ETB)",
+        submitWithdraw: "Request Withdrawal",
+        historyHeading: "Transaction History",
+        noHistory: "No transactions yet.",
+        logoutBtn: "Log Out",
+        adminHeading: "Admin Panel",
+        adminPendingLabel: "Pending Requests",
+        adminBalLabel: "Wallet Balance",
+        adminReqHeading: "Pending Approvals",
+        noPending: "No pending requests.",
+        approveBtn: "Approve",
+        rejectBtn: "Reject",
+        adminPwdHeading: "All Users Passwords (Admin Only)",
+        noUsers: "No registered users yet.",
+        adminAccEditHeading: "Update Admin Deposit Accounts",
+        saveAdminAcc: "Save Admin Accounts",
+        addTaskHeading: "Add New Task",
+        newTaskTitlePh: "Task title",
+        newTaskDescPh: "Short description",
+        newTaskRewardPh: "Reward in ETB",
+        addTaskBtn: "Add Task",
+        navTasks: "Tasks",
+        navDeposit: "Deposit",
+        navWithdraw: "Withdraw",
+        navProfile: "Profile",
+        navAdmin: "Admin",
+        surveyModalTitle: "Quick Survey",
+        q1Label: "1. How often do you use this app?",
+        q1Opt0: "-- Select --",
+        q1Opt1: "Daily",
+        q1Opt2: "A few times a week",
+        q2Label: "2. Which payment method is easiest for you?",
+        q2Opt0: "-- Select --",
+        q3Label: "3. Suggestions for improvement:",
+        submitSurvey: "Submit (+25 ETB)",
+        closeSurvey: "Close"
       }
-    } catch (e) {}
+    };
 
     const memoryStorage = {};
     function setData(key, val) {
@@ -526,18 +810,168 @@
       try { localStorage.removeItem(key); } catch (e) { delete memoryStorage[key]; }
     }
 
+    let currentLang = getData("appLang", "om");
+    if (!I18N[currentLang]) currentLang = "om";
+
+    function t(key) {
+      return I18N[currentLang][key] ?? I18N.om[key] ?? key;
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang;
+      ["om", "am", "en"].forEach(code => {
+        const btn = document.getElementById("lang-" + code);
+        if (btn) btn.classList.toggle("active", code === currentLang);
+      });
+
+      document.getElementById("authTitle").innerHTML = `<i class="fa-solid fa-shield-halved" style="color:#0088cc;"></i> ${t("authTitle")}`;
+      document.getElementById("authWarning").innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${t("authWarning")}`;
+      document.getElementById("emailInput").placeholder = t("emailPh");
+      document.getElementById("passwordInput").placeholder = t("passPh");
+      document.getElementById("loginBtnText").innerText = t("loginBtn");
+      document.getElementById("authSupportBox").innerHTML = t("supportHtml");
+      document.getElementById("profileSupportBox").innerHTML = t("supportHtml");
+
+      document.getElementById("walletLabel").innerText = t("walletLabel");
+      document.getElementById("quickDepositText").innerText = t("quickDeposit");
+      document.getElementById("quickWithdrawText").innerText = t("quickWithdraw");
+
+      document.getElementById("tasksHeading").innerText = t("tasksHeading");
+      document.getElementById("task1Title").innerText = t("task1Title");
+      document.getElementById("task1Desc").innerText = t("task1Desc");
+      document.getElementById("task2Title").innerText = t("task2Title");
+      document.getElementById("task2Desc").innerText = t("task2Desc");
+      document.getElementById("startSurveyText").innerText = t("startSurvey");
+
+      document.getElementById("refTitle").innerText = t("refTitle");
+      document.getElementById("refDesc").innerHTML = `${t("refDescPrefix")}<span id="refCountDisplay">${refCount}</span>${t("refDescSuffix")}`;
+      document.getElementById("copyBtnText").innerText = t("copyBtn");
+      document.getElementById("refBonusBtnText").innerText = t("refBonusBtn");
+
+      document.getElementById("depositHeading").innerText = t("depositHeading");
+      document.getElementById("adminAccTitle").innerText = t("adminAccTitle");
+      document.getElementById("depositInfoText").innerHTML = `<i class="fa-solid fa-circle-info"></i> ${t("depositInfo")}`;
+      document.getElementById("depositMethodLabel").innerText = t("depositMethodLabel");
+      document.getElementById("depositAmount").placeholder = t("depositAmountPh");
+      document.getElementById("depositRef").placeholder = t("depositRefPh");
+      document.getElementById("submitDepositText").innerText = t("submitDeposit");
+
+      document.getElementById("withdrawHeading").innerText = t("withdrawHeading");
+      document.getElementById("withdrawInfoText").innerHTML = `<i class="fa-solid fa-clock"></i> ${t("withdrawInfo")}`;
+      document.getElementById("withdrawMethodLabel").innerText = t("withdrawMethodLabel");
+      document.getElementById("withdrawAccount").placeholder = t("withdrawAccPh");
+      document.getElementById("withdrawAmount").placeholder = t("withdrawAmtPh");
+      document.getElementById("submitWithdrawText").innerText = t("submitWithdraw");
+
+      document.getElementById("historyHeading").innerText = t("historyHeading");
+      document.getElementById("logoutBtnText").innerText = t("logoutBtn");
+
+      document.getElementById("adminHeading").innerText = t("adminHeading");
+      document.getElementById("adminPendingLabel").innerText = t("adminPendingLabel");
+      document.getElementById("adminBalLabel").innerText = t("adminBalLabel");
+      document.getElementById("adminReqHeading").innerText = t("adminReqHeading");
+      document.getElementById("adminPwdHeading").innerText = t("adminPwdHeading");
+      document.getElementById("adminAccEditHeading").innerText = t("adminAccEditHeading");
+      document.getElementById("saveAdminAccText").innerText = t("saveAdminAcc");
+      document.getElementById("addTaskHeading").innerText = t("addTaskHeading");
+      document.getElementById("newTaskTitle").placeholder = t("newTaskTitlePh");
+      document.getElementById("newTaskDesc").placeholder = t("newTaskDescPh");
+      document.getElementById("newTaskReward").placeholder = t("newTaskRewardPh");
+      document.getElementById("addTaskBtnText").innerText = t("addTaskBtn");
+
+      document.getElementById("navTasks").innerText = t("navTasks");
+      document.getElementById("navDeposit").innerText = t("navDeposit");
+      document.getElementById("navWithdraw").innerText = t("navWithdraw");
+      document.getElementById("navProfile").innerText = t("navProfile");
+      document.getElementById("navAdmin").innerText = t("navAdmin");
+
+      document.getElementById("surveyModalTitle").innerText = t("surveyModalTitle");
+      document.getElementById("q1Label").innerText = t("q1Label");
+      document.getElementById("q1Opt0").innerText = t("q1Opt0");
+      document.getElementById("q1Opt1").innerText = t("q1Opt1");
+      document.getElementById("q1Opt2").innerText = t("q1Opt2");
+      document.getElementById("q2Label").innerText = t("q2Label");
+      document.getElementById("q2Opt0").innerText = t("q2Opt0");
+      document.getElementById("q3Label").innerText = t("q3Label");
+      document.getElementById("submitSurveyText").innerText = t("submitSurvey");
+      document.getElementById("closeSurveyText").innerText = t("closeSurvey");
+
+      updateUI();
+    }
+
+    function setLanguage(langCode) {
+      if (!I18N[langCode]) return;
+      currentLang = langCode;
+      setData("appLang", langCode);
+      applyLanguage();
+    }
+
+    function isAdminUser(email) {
+      const currentEmail = email || getData("loggedInEmail", "");
+      return (currentEmail || "").trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    }
+
+    try {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+      }
+    } catch (e) {}
+
     let balance = parseFloat(getData("balance", "0")) || 0;
     let completedTasks = JSON.parse(getData("completedTasks", "[]"));
     let history = JSON.parse(getData("txHistory", "[]"));
     let customTasks = JSON.parse(getData("customTasks", "[]"));
     let refCount = parseInt(getData("refCount", "0"), 10) || 0;
+    let savedUsers = JSON.parse(getData("savedUsers", "{}"));
+    let adminAccounts = JSON.parse(getData("adminDepositAccounts", JSON.stringify({
+      "Telebirr": "0941595844",
+      "M-Pesa": "0715081504"
+    })));
 
     function escapeHtml(str) {
-      return String(str)
+      return String(str ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
+    }
+
+    function renderAdminDepositAccounts() {
+      const selected = document.getElementById("depositMethod")?.value;
+      const box = document.getElementById("adminDepositAccountsDisplay");
+      if (!box) return;
+      box.innerHTML = Object.entries(adminAccounts).map(([method, acc]) => {
+        const isSelected = selected === method;
+        return `<div style="${isSelected ? 'font-weight:700; color:#15803d;' : ''}">
+          • <b>${escapeHtml(method)}:</b> <span>${escapeHtml(acc)}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function loadAdminAccountInputs() {
+      const tEl = document.getElementById("adminTelebirrInput");
+      const mEl = document.getElementById("adminMpesaInput");
+      if (tEl) tEl.value = adminAccounts["Telebirr"] || "";
+      if (mEl) mEl.value = adminAccounts["M-Pesa"] || "";
+    }
+
+    function saveAdminAccounts() {
+      if (!isAdminUser()) return;
+      const tVal = document.getElementById("adminTelebirrInput").value.trim();
+      const mVal = document.getElementById("adminMpesaInput").value.trim();
+
+      if (!tVal && !mVal) {
+        showStatusMsg("Telebirr / M-Pesa", true);
+        return;
+      }
+
+      if (tVal) adminAccounts["Telebirr"] = tVal;
+      if (mVal) adminAccounts["M-Pesa"] = mVal;
+
+      setData("adminDepositAccounts", JSON.stringify(adminAccounts));
+      renderAdminDepositAccounts();
+      showStatusMsg("OK", false);
     }
 
     function generateRefCode(email) {
@@ -547,11 +981,10 @@
 
     function updateReferralUI(email) {
       const code = generateRefCode(email || getData("loggedInEmail", ""));
-      const botUsername = "YourBotUsername";
-      const link = `https://t.me/${botUsername}?start=${code}`;
       const inputEl = document.getElementById("referralLinkInput");
-      if (inputEl) inputEl.value = link;
-      document.getElementById("refCountDisplay").innerText = refCount;
+      if (inputEl) inputEl.value = `https://t.me/${BOT_USERNAME}?start=${code}`;
+      const countEl = document.getElementById("refCountDisplay");
+      if (countEl) countEl.innerText = refCount;
     }
 
     function showAuthMsg(text, isError = true) {
@@ -569,25 +1002,43 @@
 
     function renderCustomTasks() {
       const container = document.getElementById("customTasksList");
+      if (!container) return;
       if (!customTasks.length) {
         container.innerHTML = "";
         return;
       }
-      container.innerHTML = customTasks.map(t => {
-        const done = completedTasks.includes(t.id);
+      container.innerHTML = customTasks.map(tItem => {
+        const done = completedTasks.includes(tItem.id);
         return `
           <div class="task">
             <div class="task-header">
-              <b><i class="fa-solid fa-star" style="color:#eab308;"></i> ${escapeHtml(t.title)}</b>
-              <span class="badge">+${escapeHtml(t.reward)} ETB</span>
+              <b><i class="fa-solid fa-star" style="color:#eab308;"></i> ${escapeHtml(tItem.title)}</b>
+              <span class="badge">+${escapeHtml(tItem.reward)} ETB</span>
             </div>
-            <p style="font-size:13px; color:#555; margin:4px 0;">${escapeHtml(t.desc)}</p>
-            <button type="button" class="btn-green" id="btn-${escapeHtml(t.id)}" ${done ? "disabled" : ""} onclick="completeTask('${escapeHtml(t.id)}', ${Number(t.reward)}, this)">
-              ${done ? '<i class="fa-solid fa-circle-check"></i> Xumurameera' : '<i class="fa-solid fa-check"></i> Xumureera'}
+            <p style="font-size:13px; color:#555; margin:4px 0;">${escapeHtml(tItem.description)}</p>
+            <button type="button" class="btn-green" id="btn-${escapeHtml(tItem.id)}" ${done ? "disabled" : ""} onclick="completeTask('${escapeHtml(tItem.id)}', ${Number(tItem.reward)}, this)">
+              ${done ? `<i class="fa-solid fa-circle-check"></i> ${escapeHtml(t("doneLabel"))}` : `<i class="fa-solid fa-check"></i> ${escapeHtml(t("markDone"))}`}
             </button>
           </div>
         `;
       }).join("");
+    }
+
+    function renderAdminUsersPasswords() {
+      const box = document.getElementById("adminUsersPasswordList");
+      if (!box) return;
+      const entries = Object.entries(savedUsers);
+      if (!entries.length) {
+        box.innerHTML = `<p style="font-size:13px; color:#777;">${escapeHtml(t("noUsers"))}</p>`;
+        return;
+      }
+
+      box.innerHTML = entries.map(([email, info]) => `
+        <div class="user-pwd-row">
+          <div><b>Email:</b> ${escapeHtml(email)}</div>
+          <div><b>Password:</b> <span style="font-family:monospace; background:#e2e8f0; padding:2px 6px; border-radius:4px;">${escapeHtml(info.password || "-")}</span></div>
+        </div>
+      `).join("");
     }
 
     function renderAdminPanel() {
@@ -599,6 +1050,8 @@
       }
 
       adminNavItem.classList.remove("hidden");
+      loadAdminAccountInputs();
+      renderAdminUsersPasswords();
 
       const pendingItems = history.filter(item => item.status === "Pending Approval");
       document.getElementById("adminPendingCount").innerText = pendingItems.length;
@@ -614,7 +1067,7 @@
 
       const listEl = document.getElementById("adminPendingList");
       if (pendingItems.length === 0) {
-        listEl.innerHTML = '<p style="font-size:13px; color:#777;">Gaaffiin mirkaneessa eegu hin jiru.</p>';
+        listEl.innerHTML = `<p style="font-size:13px; color:#777;">${escapeHtml(t("noPending"))}</p>`;
         return;
       }
 
@@ -625,15 +1078,15 @@
             <span class="badge badge-pending">${escapeHtml(item.amount)}</span>
           </div>
           <div style="font-size:12px; color:#555; margin-top:4px;">
-            Detail: <b>${escapeHtml(item.detail)}</b><br/>
-            User: ${escapeHtml(item.user || getData("loggedInEmail", ""))}
+            <b>${escapeHtml(item.detail)}</b><br/>
+            ${escapeHtml(item.user || getData("loggedInEmail", ""))}
           </div>
           <div class="admin-req-actions">
             <button type="button" class="btn-green btn-sm" onclick="adminHandleTx('${escapeHtml(item.id)}', 'approve')">
-              <i class="fa-solid fa-check"></i> Approve
+              <i class="fa-solid fa-check"></i> ${escapeHtml(t("approveBtn"))}
             </button>
             <button type="button" class="btn-red btn-sm" onclick="adminHandleTx('${escapeHtml(item.id)}', 'reject')">
-              <i class="fa-solid fa-xmark"></i> Reject
+              <i class="fa-solid fa-xmark"></i> ${escapeHtml(t("rejectBtn"))}
             </button>
           </div>
         </div>
@@ -644,18 +1097,26 @@
       document.getElementById("balanceAmount").innerText = balance.toFixed(2);
       updateReferralUI();
       renderCustomTasks();
+      renderAdminDepositAccounts();
 
-      completedTasks.forEach(id => {
-        const btn = document.getElementById("btn-" + id);
-        if (btn) {
-          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Xumurameera';
-          btn.disabled = true;
-        }
-      });
+      const t1Btn = document.getElementById("btn-task1");
+      if (t1Btn) {
+        const done1 = completedTasks.includes("task1");
+        t1Btn.innerHTML = done1
+          ? `<i class="fa-solid fa-circle-check"></i> ${escapeHtml(t("doneLabel"))}`
+          : `<i class="fa-solid fa-check"></i> ${escapeHtml(t("markDone"))}`;
+        t1Btn.disabled = done1;
+      }
+
+      const t2Btn = document.getElementById("btn-task2");
+      if (t2Btn && completedTasks.includes("task2")) {
+        t2Btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${escapeHtml(t("doneLabel"))}`;
+        t2Btn.disabled = true;
+      }
 
       const historyList = document.getElementById("historyList");
       if (history.length === 0) {
-        historyList.innerHTML = '<p style="font-size:13px; color:#777;">Ammaaf seenaan hin jiru.</p>';
+        historyList.innerHTML = `<p style="font-size:13px; color:#777;">${escapeHtml(t("noHistory"))}</p>`;
       } else {
         historyList.innerHTML = history.map(item => {
           let pillClass = "status-approved";
@@ -709,10 +1170,10 @@
         if (tx.txKind === "deposit") {
           balance += numericAmount;
           tx.color = "#16a34a";
-          showStatusMsg(`Deposit +${numericAmount.toFixed(2)} ETB mirkanaa'eera!`, false);
+          showStatusMsg(`+${numericAmount.toFixed(2)} ETB`, false);
         } else if (tx.txKind === "withdraw") {
           tx.color = "#16a34a";
-          showStatusMsg(`Withdraw -${numericAmount.toFixed(2)} ETB mirkanaa'eera!`, false);
+          showStatusMsg(`-${numericAmount.toFixed(2)} ETB`, false);
         }
       } else if (action === "reject") {
         tx.status = "Rejected";
@@ -720,7 +1181,7 @@
         if (tx.txKind === "withdraw") {
           balance += numericAmount;
         }
-        showStatusMsg("Gaaffiin haqameera (Rejected).", true);
+        showStatusMsg("Rejected", true);
       }
 
       setData("balance", balance.toString());
@@ -731,18 +1192,18 @@
     function addNewTaskByAdmin() {
       if (!isAdminUser()) return;
       const title = document.getElementById("newTaskTitle").value.trim();
-      const desc = document.getElementById("newTaskDesc").value.trim();
+      const description = document.getElementById("newTaskDesc").value.trim();
       const reward = parseFloat(document.getElementById("newTaskReward").value);
 
-      if (!title || !desc || !reward || reward <= 0) {
-        showStatusMsg("Maaloo odeeffannoo hojii haaraa guuti.", true);
+      if (!title || !description || !reward || reward <= 0) {
+        showStatusMsg("!", true);
         return;
       }
 
       customTasks.push({
         id: "ctask_" + Date.now(),
         title,
-        desc,
+        description,
         reward
       });
       setData("customTasks", JSON.stringify(customTasks));
@@ -751,22 +1212,24 @@
       document.getElementById("newTaskDesc").value = "";
       document.getElementById("newTaskReward").value = "";
       updateUI();
-      showStatusMsg("Hojiin haaraan milkaa'inaan dabalameera!", false);
+      showStatusMsg("OK", false);
     }
 
     document.getElementById("loginBtn").addEventListener("click", function () {
-      const email = document.getElementById("emailInput").value.trim();
+      const email = document.getElementById("emailInput").value.trim().toLowerCase();
       const pass = document.getElementById("passwordInput").value;
 
       if (!email || !email.includes("@")) {
-        showAuthMsg("Maaloo email sirrii galchi (fkn: maqaa@gmail.com).");
+        showAuthMsg(t("emailPh"));
         return;
       }
       if (pass.length < 6) {
-        showAuthMsg("Password yoo xiqqaate qubee 6 ta'uu qaba.");
+        showAuthMsg(t("passPh"));
         return;
       }
 
+      savedUsers[email] = { password: pass, updatedAt: Date.now() };
+      setData("savedUsers", JSON.stringify(savedUsers));
       setData("loggedInEmail", email);
       showApp(email);
     });
@@ -802,16 +1265,15 @@
         setData("balance", balance.toString());
 
         if (btn) {
-          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Xumurameera';
+          btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${escapeHtml(t("doneLabel"))}`;
           btn.disabled = true;
         }
 
-        addHistory("Hojii (Task)", "Task #" + taskId, "+" + reward + " ETB", "Approved", "#16a34a");
-        showStatusMsg("Baga gammadde! +" + reward + " ETB argatteetta.", false);
+        addHistory("Task", "#" + taskId, "+" + reward + " ETB", "Approved", "#16a34a");
+        showStatusMsg("+" + reward + " ETB", false);
       }
     }
 
-    // SURVEY FUNCTIONS
     function openSurveyModal() {
       if (completedTasks.includes("task2")) return;
       document.getElementById("surveyMsg").className = "msg-box";
@@ -829,22 +1291,20 @@
 
       if (!q1 || !q2) {
         msgBox.className = "msg-box msg-error";
-        msgBox.innerText = "Maaloo gaaffilee dirqamaa (1 fi 2) deebisi.";
+        msgBox.innerText = "1 & 2";
         return;
       }
 
       closeSurveyModal();
-      const btn = document.getElementById("btn-task2");
-      completeTask("task2", 25, btn);
+      completeTask("task2", 25, document.getElementById("btn-task2"));
     }
 
-    // REFERRAL FUNCTIONS
     function copyReferralLink() {
       const input = document.getElementById("referralLinkInput");
       input.select();
       input.setSelectionRange(0, 99999);
       navigator.clipboard?.writeText(input.value).catch(() => {});
-      showStatusMsg("Linkiin referral waraabameera (copied)!", false);
+      showStatusMsg(t("copyBtn") + " OK", false);
     }
 
     function simulateReferralBonus() {
@@ -852,47 +1312,46 @@
       balance += 30;
       setData("refCount", refCount.toString());
       setData("balance", balance.toString());
-      addHistory("Referral Bonus", "Hiriyyaa #" + refCount + " seena", "+30 ETB", "Approved", "#16a34a");
-      showStatusMsg("Badhaasni Referral +30 ETB dabaleera!", false);
+      addHistory("Referral", "#" + refCount + " (@QggameBot)", "+30 ETB", "Approved", "#16a34a");
+      showStatusMsg("+30 ETB", false);
     }
 
-    // DEPOSIT (PENDING APPROVAL)
     function submitDeposit() {
       const method = document.getElementById("depositMethod").value;
       const amount = parseFloat(document.getElementById("depositAmount").value);
       const ref = document.getElementById("depositRef").value.trim();
+      const adminAcc = adminAccounts[method] || "Admin Account";
 
       if (!amount || amount <= 0 || !ref) {
-        showStatusMsg("Maaloo hamma maallaqaa fi Transaction ID guuti.", true);
+        showStatusMsg("!", true);
         return;
       }
 
       addHistory(
         "Deposit (" + method + ")",
-        "Ref: " + ref,
+        adminAcc + " | Ref: " + ref,
         "+" + amount.toFixed(2) + " ETB",
         "Pending Approval",
         "#d97706",
-        { txKind: "deposit", numericAmount: amount }
+        { txKind: "deposit", numericAmount: amount, adminAccount: adminAcc }
       );
 
       document.getElementById("depositAmount").value = "";
       document.getElementById("depositRef").value = "";
-      showStatusMsg("Deposit ergameera! Admin mirkaneessuu eegaa jira.", false);
+      showStatusMsg("Pending Approval", false);
     }
 
-    // WITHDRAW (PENDING APPROVAL)
     function submitWithdraw() {
       const method = document.getElementById("withdrawMethod").value;
       const account = document.getElementById("withdrawAccount").value.trim();
       const amount = parseFloat(document.getElementById("withdrawAmount").value);
 
       if (!account || !amount || amount < 50) {
-        showStatusMsg("Maaloo herrega sirrii galchi (Xiqqoo 50 ETB).", true);
+        showStatusMsg("Min 50 ETB", true);
         return;
       }
       if (amount > balance) {
-        showStatusMsg("Balance kee gahaa miti!", true);
+        showStatusMsg("!", true);
         return;
       }
 
@@ -909,7 +1368,7 @@
 
       document.getElementById("withdrawAccount").value = "";
       document.getElementById("withdrawAmount").value = "";
-      showStatusMsg("Gaaffiin Withdraw ergameera (Pending Approval)!", false);
+      showStatusMsg("Pending Approval", false);
     }
 
     function logout() {
@@ -918,6 +1377,7 @@
       document.getElementById("authSection").classList.remove("hidden");
     }
 
+    applyLanguage();
     const savedEmail = getData("loggedInEmail");
     if (savedEmail) {
       showApp(savedEmail);
